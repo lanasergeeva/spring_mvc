@@ -1,10 +1,12 @@
 package com.lana.spring.mvc;
 
+import com.lana.spring.model.Employee;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/employee")
@@ -15,20 +17,16 @@ public class MyController {
     }
 
     @RequestMapping("/askDetails")
-    public String askEmployeeDet() {
+    public String askEmployeeDet(Model model) {
+        model.addAttribute("employee", new Employee());
         return "askEmployee";
     }
 
-   /* @RequestMapping("/showDetails")
-    public String showEmployeeDet() {
-        return "showEmployee";
-    }*/
-
     @RequestMapping("/showDetails")
-    public String showEmployeeDet(HttpServletRequest request, Model model) {
-        String empName = request.getParameter("empName");
-        empName = "Name is:  " + empName;
-        model.addAttribute("nameAttr", empName);
+    public String showEmployeeDet(@Valid @ModelAttribute("employee") Employee employee, BindingResult br) {
+        if (br.hasErrors()) {
+            return "askEmployee";
+        }
         return "showEmployee";
     }
 }
